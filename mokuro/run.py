@@ -8,7 +8,6 @@ from loguru import logger
 
 from mokuro import MokuroGenerator
 from mokuro import __version__
-from mokuro.legacy.overlay_generator import generate_legacy_html
 from mokuro.volume import VolumeCollection
 
 
@@ -135,8 +134,6 @@ def run(
             try:
                 volume.unzip(tmp_dir)
                 mg.process_volume(volume, ignore_errors=ignore_errors, no_cache=no_cache)
-                if legacy_html:
-                    generate_legacy_html(volume, as_one_file=as_one_file, ignore_errors=ignore_errors)
 
             except Exception:
                 logger.exception(f"Error while processing {volume.path_in}")
