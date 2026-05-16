@@ -40,7 +40,10 @@ class MangaPageOcr:
             device = "cuda" if cuda and not force_cpu else "cpu"
             logger.info(f"Initializing text detector, using device {device}")
             self.text_detector = TextDetector(
-                model_path=cache.comic_text_detector, input_size=detector_input_size, device=device, act="leaky"
+                model_path=cache.comic_text_detector(is_torch=device == "cuda"),
+                input_size=detector_input_size,
+                device=device,
+                act="leaky",
             )
             self.mocr = MangaOcr(pretrained_model_name_or_path, force_cpu)
 

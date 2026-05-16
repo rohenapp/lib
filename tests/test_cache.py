@@ -83,4 +83,4 @@ class TestComicTextDetector:
         expected_path = instance.root / "comictextdetector.pt"
         expected_path.touch()
 
-        assert instance.comic_text_detector == expected_path
+        assert instance.comic_text_detector() == expected_path

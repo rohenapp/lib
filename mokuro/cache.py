@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import requests
@@ -7,13 +6,13 @@ from loguru import logger
 
 class cache:
     def __init__(self):
-        self.root = Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache") / "manga-ocr"
+        self.root = Path.cwd() / "bin"
         self.root.mkdir(parents=True, exist_ok=True)
 
-    @property
-    def comic_text_detector(self):
-        path = self.root / "comictextdetector.pt"
-        url = "https://github.com/zyddnys/manga-image-translator/releases/download/beta-0.2.1/comictextdetector.pt"
+    def comic_text_detector(self, is_torch=True):
+        ext = "pt" if is_torch else "pt.onnx"
+        path = self.root / f"comictextdetector.{ext}"
+        url = f"https://github.com/zyddnys/manga-image-translator/releases/download/beta-0.3/comictextdetector.{ext}"
 
         self._download_if_needed(path, url)
         return path

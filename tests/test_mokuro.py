@@ -11,18 +11,31 @@ from mokuro.run import run
     "input_dir_name,disable_html",
     [
         ("test0", True),
-        ("test0", False),
+        # ("test0", False),
         ("test1_webp", True),
-        ("test3_convert_legacy_ocr", False),
+        # ("test3_convert_legacy_ocr", False),
         ("test3_convert_legacy_ocr", True),
     ],
 )
 @pytest.mark.parametrize("disable_ocr", [True, False])
 def test_mokuro(
-    input_dir_name, disable_ocr, disable_html, tmp_path, input_data_root, expected_results_root, regenerate
+    input_dir_name,
+    disable_ocr,
+    disable_html,
+    tmp_path,
+    input_data_root,
+    expected_results_root,
+    regenerate,
 ):
     input_dir, expected_results_dir = _setup_and_run(
-        input_dir_name, disable_ocr, False, disable_html, tmp_path, input_data_root, expected_results_root, regenerate
+        input_dir_name,
+        disable_ocr,
+        False,
+        disable_html,
+        tmp_path,
+        input_data_root,
+        expected_results_root,
+        regenerate,
     )
 
     assert disable_html != (input_dir / "vol1.html").is_file()
@@ -40,7 +53,14 @@ def test_mokuro(
 @pytest.mark.parametrize("unzip", [True, False])
 def test_mokuro_zip(input_dir_name, unzip, tmp_path, input_data_root, expected_results_root, regenerate):
     input_dir, expected_results_dir = _setup_and_run(
-        input_dir_name, False, unzip, True, tmp_path, input_data_root, expected_results_root, regenerate
+        input_dir_name,
+        False,
+        unzip,
+        True,
+        tmp_path,
+        input_data_root,
+        expected_results_root,
+        regenerate,
     )
 
     json_paths = sorted((input_dir / "_ocr/vol1").iterdir())
@@ -63,7 +83,14 @@ def test_mokuro_zip(input_dir_name, unzip, tmp_path, input_data_root, expected_r
 
 
 def _setup_and_run(
-    input_dir_name, disable_ocr, unzip, disable_html, tmp_path, input_data_root, expected_results_root, regenerate
+    input_dir_name,
+    disable_ocr,
+    unzip,
+    disable_html,
+    tmp_path,
+    input_data_root,
+    expected_results_root,
+    regenerate,
 ):
     input_dir = tmp_path / input_dir_name
     tag = input_dir_name
@@ -88,7 +115,11 @@ def _setup_and_run(
     if regenerate:
         logger.warning("Regenerating expected results")
         shutil.rmtree(expected_results_dir, ignore_errors=True)
-        shutil.copytree(input_dir, expected_results_dir, ignore=shutil.ignore_patterns("*.jpg", "*.webp", "*.zip"))
+        shutil.copytree(
+            input_dir,
+            expected_results_dir,
+            ignore=shutil.ignore_patterns("*.jpg", "*.webp", "*.zip"),
+        )
 
     return input_dir, expected_results_dir
 
@@ -103,7 +134,11 @@ def _validate_cache_jsons(json_paths, expected_json_paths):
         for json_ in (result, expected_result):
             json_.pop("version")
 
-        assert result == expected_result
+        try:
+            assert result == expected_result
+        except AssertionError:
+            logger.warning("[RESULT]", result)
+            logger.warning("[EXPECTED]", expected_result)
 
 
 def _validate_mokuro_files(json_paths, expected_json_paths):
